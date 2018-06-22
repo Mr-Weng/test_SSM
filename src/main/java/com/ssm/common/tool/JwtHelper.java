@@ -17,7 +17,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtHelper {
 
     /**
-     * 生成令牌
+     * 生成令牌(token)
      */
     public static String createJWT(String name, String userId, String role,
                                    String audience, String issuer, long TTLMillis, String base64Security)
@@ -51,7 +51,7 @@ public class JwtHelper {
     }
 
     /**
-     * 解析令牌
+     * 解析令牌(token)
      *
      * @param jsonWebToken   令牌
      * @param base64Security 加密信息
