@@ -10,7 +10,6 @@ import com.ssm.common.tool.JwtHelper;
 import com.ssm.common.tool.SnowflakeIdWorker;
 import com.ssm.model.Login;
 import com.ssm.service.LoginService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +31,7 @@ public class LoginController {
     SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0,0);
 
     /**
-     * 登录，获取token
+     * 登录，获取token（不被拦截）
      */
     @RequestMapping(value = "login",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResultMsg Login(@RequestBody LoginPara loginPara){
@@ -94,7 +93,7 @@ public class LoginController {
     }
 
     /**
-     * 新增用户（注册）
+     * 新增用户（注册，免token，不被拦截）
      * @param login
      * @return
      */
@@ -132,7 +131,9 @@ public class LoginController {
     @RequestMapping(value = "updateLogin",method = RequestMethod.PUT,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResultMsg updateLogin(@RequestBody Login login){
         ResultMsg resultMsg;
+        login.setUserID(login.getUserID().trim());
         if(loginService.selectUserByID(login.getUserID())!=null){
+            login.setPassword(EncryptionHelper.getMD5(login.getPassword()+login.getUserID()));
             int request = loginService.updateLogin(login);
             if(request>0){
                 resultMsg = new ResultMsg(ResultStatusCode.OK.getErrcode(),
