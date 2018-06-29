@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.dao.Login_RoleDao">
+    
+    <resultMap id="LRMap" type="com.ssm.model.Login_Role">
+        <id column="LRID" property="lrid" jdbcType="VARCHAR"/>
+        <result column="LID" property="lid" jdbcType="VARCHAR"/>
+        <result column="LNAME" property="lname" jdbcType="VARCHAR"/>
+        <result column="RID" property="rid" jdbcType="VARCHAR"/>
+        <result column="RNAME" property="rname" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查看当前用户是否有当前角色-->
+    <select id="selectHasRid" parameterType="java.lang.String" resultMap="LRMap">
+        select * from LOGIN_ROLE where LID = #{lid} and RID = #{rid}
+    </select>
+
+    <!--根据用户id查找关联角色-->
+    <select id="selectAllByLid" parameterType="java.lang.String" resultMap="LRMap">
+        select * from LOGIN_ROLE where LID = #{lid}
+    </select>
+
+    <!--根据用户名查找关联角色-->
+    <select id="selectAllByLName" parameterType="java.lang.String" resultMap="LRMap">
+        select * from LOGIN_ROLE where LNAME = #{lname}
+    </select>
+
+    <!--根据用户id修改关联表的用户名-->
+    <update id="updateLRLNameByLid" parameterType="java.lang.String">
+        update LOGIN_ROLE
+        set LNAME = #{lname}
+        where LID = #{lid}
+    </update>
+
+    <!--新增用户-角色（授权，需要权限）-->
+    <insert id="insertLR" parameterType="com.ssm.model.Login_Role">
+        insert into LOGIN_ROLE(
+        LRID, LID, LNAME, RID, RNAME
+        ) VALUES (
+        #{lrid}, #{lid}, #{lname}, #{rid}, #{rname}
+        )
+    </insert>
+
+    <!--删除用户-角色（释权，需要权限）根据用户id与角色id-->
+    <delete id="deleteRByLidRid" parameterType="java.lang.String">
+        delete from LOGIN_ROLE where LID = #{lid} and RID = #{rid}
+    </delete>
+
+    <!--根据用户id删除所有角色关联-->
+    <delete id="deleteLRAll" parameterType="java.lang.String">
+        delete from LOGIN_ROLE where LID = #{userid}
+    </delete>
+
+    <!--根据用户id和角色id修改角色信息（改权，需要权限）-->
+    <update id="updateRByLidRid" parameterType="java.lang.String">
+        UPDATE LOGIN_ROLE
+        SET RID = #{newRid},RNAME = #{newRname}
+        where LID = #{lid} AND RID = #{rid}
+    </update>
+
+</mapper>

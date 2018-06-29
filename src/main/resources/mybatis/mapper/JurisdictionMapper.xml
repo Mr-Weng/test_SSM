@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.dao.JurisdictionDao">
+
+    <resultMap id="JurisdictionMap" type="com.ssm.model.Jurisdiction">
+        <id column="JID" property="jid" jdbcType="VARCHAR"/>
+        <result column="JNAME" property="jname" jdbcType="VARCHAR"/>
+        <result column="JNAME_INFO" property="jname_info" jdbcType="VARCHAR"/>
+        <result column="JURL" property="url" jdbcType="VARCHAR"/>
+        <result column="METHOD" property="method" jdbcType="VARCHAR"/>
+        <result column="ACTION" property="action" jdbcType="VARCHAR"/>
+        <result column="ACTION_INFO" property="action_info" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--根据资源动作字符串查找资源-->
+    <select id="selectJrdByAction" parameterType="java.lang.String" resultMap="JurisdictionMap">
+        select * from JURISDICTION where ACTION = #{action}
+    </select>
+
+    <!--新增资源（需要权限）-->
+    <insert id="insertJurisdiction" parameterType="com.ssm.model.Jurisdiction">
+        insert into JURISDICTION (
+        JID, JNAME, JNAME_INFO, URL, METHOD, ACTION, ACTION_INFO
+        )values (
+        #{jid}, #{jname}, #{jname_info}, #{url}, #{method}, #{action}, #{action_info}
+        )
+    </insert>
+
+</mapper>

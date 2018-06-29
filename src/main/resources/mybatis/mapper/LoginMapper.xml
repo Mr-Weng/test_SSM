@@ -8,19 +8,40 @@
         <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap id="TestMsp" type="com.ssm.model.Test">
+        <id column="TID" property="tid" jdbcType="VARCHAR"/>
+        <result column="TNAME" property="tname" jdbcType="VARCHAR"/>
+        <result column="SID" property="sid" jdbcType="VARCHAR"/>
+        <association property="student" javaType="com.ssm.model.Student">
+            <result column="SNO" property="no" jdbcType="VARCHAR"/>
+            <result column="SNAME" property="name" jdbcType="VARCHAR"/>
+            <result column="SSEX" property="sex" jdbcType="VARCHAR"/>
+            <result column="SAGE" property="age" jdbcType="INTEGER"/>
+        </association>
+    </resultMap>
+
+    <!--获取所有用户-->
+    <select id="selectAllUser" resultMap="LoginMap">
+        select * from LOGIN
+    </select>
+
+    <!--根据id查询用户-->
     <select id="selectUserByID" parameterType="java.lang.String" resultMap="LoginMap">
         select * from LOGIN where USERID = #{userID}
     </select>
 
+    <!--根据用户名查询用户-->
     <select id="selectUserByName" parameterType="java.lang.String" resultMap="LoginMap">
         select * from LOGIN
         where USERNAME = #{username}
     </select>
 
+    <!--添加用户-->
     <insert id="insertLogin" parameterType="com.ssm.model.Login">
         insert into LOGIN (USERID,USERNAME,PASSWORD) VALUES (#{userID},#{username},#{password})
     </insert>
 
+    <!--修改用户（除管理员，只能修改自身，登录后会返回当前用户id，可在前端页面将要修改的自身用户id写死）-->
     <update id="updateLogin" parameterType="com.ssm.model.Login">
         update LOGIN
         set USERID = #{userID}
@@ -32,5 +53,23 @@
             </if>
         where USERID = #{userID}
     </update>
+
+    <!--删除用户（需要管理员权限，删除用户前应检查是否与角色关联，如关联，则应该连同“用户-角色关联表”一同删除）-->
+    <delete id="deleteLogin" parameterType="java.lang.String">
+        delete from LOGIN
+        where USERID = #{userid}
+    </delete>
+
+    <!--左连接测试-->
+    <select id="testAll" parameterType="java.lang.String" resultMap="TestMsp">
+        select t.*,s.* from TEST t left join STUDENT s on t.SID = s.SNO and t.TID = #{tid}
+    </select>
+
+    <!--用于事务测试-->
+    <insert id="test" parameterType="com.ssm.model.Test">
+        insert into TEST (TID,TNAME) values (#{tid},#{tname})
+    </insert>
+
+
 
 </mapper>

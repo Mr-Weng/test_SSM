@@ -38,6 +38,7 @@ public class JwtHelper {
                 .claim("userid", userId)
                 .setIssuer(issuer)
                 .setAudience(audience)
+                .setIssuedAt(now)
                 .signWith(signatureAlgorithm, signingKey);
         //添加Token过期时间
         if (TTLMillis >= 0) {

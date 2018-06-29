@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * token 拦截器类（拦截所有 /api/* 下的路径）
@@ -50,8 +51,12 @@ public class TokenInterceptor implements HandlerInterceptor {
                         if(clientId.equals(audience.getClientId())) {  //判断客户端id是否相等
                             if (claims.containsKey("unique_name")) {
                                 String userName = String.valueOf(claims.get("unique_name"));
+//                                String userName = String.valueOf(request.getSession().getAttribute("username"));
+//                                System.out.println("username:"+userName);
                                 Login login = loginService.selectUserByName(userName);
-
+                                if(login != null){
+                                    String servletPath = request.getServletPath();
+                                    System.out.println("路径:"+servletPath);
 //                                if (user != null && user.getStatus() == '0') {  //0启用，1禁用
                                     if (claims.containsKey("role")) {
                                         String password = String.valueOf(claims.get("role"));
@@ -59,7 +64,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                                             return true;
                                         }
                                     }
-//                                }
+                                }
                             }
                         }
                     }
@@ -74,6 +79,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         ObjectMapper mapper = new ObjectMapper();
 
         resultMsg = new ResultMsg(ResultStatusCode.INVALID_TOKEN.getErrcode(), ResultStatusCode.INVALID_TOKEN.getErrmsg(), "被拦截了（原先返回null）");
+//        resultMsg = new ResultMsg(ResultStatusCode.INVALID_TOKEN.getErrcode(), ResultStatusCode.INVALID_TOKEN.getErrmsg(), auth.length());
         response.getWriter().write(mapper.writeValueAsString(resultMsg));
         return false;
     }
